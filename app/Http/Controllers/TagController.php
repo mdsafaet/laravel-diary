@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tag;
-use Illuminate\Http\Request;
+use App\Http\Requests\TagRequest;
 
 class TagController extends Controller
 {
@@ -12,7 +12,8 @@ class TagController extends Controller
      */
     public function index()
     {
-        //
+        $tags = Tag::latest()->get();
+        return view('tags.index', compact('tags'));
     }
 
     /**
@@ -20,15 +21,20 @@ class TagController extends Controller
      */
     public function create()
     {
-        //
+        return view('tags.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TagRequest $request)
     {
-        //
+        $data = $request->validated();
+        Tag::create($data);
+
+        return redirect()
+            ->route('tags.index')
+            ->with('success', 'Tag created successfully.');
     }
 
     /**
@@ -36,7 +42,7 @@ class TagController extends Controller
      */
     public function show(Tag $tag)
     {
-        //
+       
     }
 
     /**
@@ -44,15 +50,20 @@ class TagController extends Controller
      */
     public function edit(Tag $tag)
     {
-        //
+        return view('tags.edit', compact('tag'));
+
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Tag $tag)
+    public function update(TagRequest $request, Tag $tag)
     {
-        //
+        $tag->update($request->validated());
+
+        return redirect()
+            ->route('tags.edit', $tag->id)
+            ->with('success', 'Tag updated successfully.');
     }
 
     /**
@@ -60,6 +71,10 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
-        //
+        $tag->delete();
+
+        return redirect()
+            ->route('tags.index')
+            ->with('success', 'Tag deleted successfully.');
     }
 }
