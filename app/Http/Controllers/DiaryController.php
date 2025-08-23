@@ -2,64 +2,93 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DiaryUpdateRequest;
 use App\Models\Diary;
-use Illuminate\Http\Request;
+use App\Models\Category;
+use App\Models\Tag;
+use App\Http\Requests\DiaryRequest;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
 
 class DiaryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
+   use  AuthorizesRequests ;
     public function index()
     {
-        //
+
+         $diaries = Diary::with(['category', 'tag'])->latest();
+
+
+         if (Auth::user()->role !== 'admin') {
+             $diaries->where('user_id', Auth::id());
+         }
+         $diaries = $diaries->get();
+     
+      
+      
+        return view('diarys.index', compact('diaries'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $this->authorize('create', Diary::class);
+
+        $categories = Category::all();
+        $tags = Tag::all();
+
+        return view('diarys.create', compact('categories', 'tags'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(DiaryRequest $request)
     {
-        //
+        $this->authorize('create', Diary::class);
+
+        $data = $request->validated();
+
+         $data['user_id'] = Auth::id();
+     
+        Diary::create($data);
+
+        return redirect()->route('diarys.index')
+            ->with('success', 'Diary created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Diary $diary)
     {
-        //
+        $this->authorize('view', $diary);
+
+        $diary->load(['category', 'tag']);
+        return view('diarys.show', compact('diary'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Diary $diary)
     {
-        //
+        $this->authorize('update', $diary);
+
+        $categories = Category::all();
+        $tags = Tag::all();
+
+        return view('diarys.edit', compact('diary', 'categories', 'tags'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Diary $diary)
+    public function update(DiaryUpdateRequest $request, Diary $diary)
     {
-        //
+        $this->authorize('update', $diary);
+
+        $diary->update($request->validated());
+
+        return redirect()->route('diarys.index', $diary->id)
+            ->with('success', 'Diary updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Diary $diary)
     {
-        //
+        $this->authorize('delete', $diary);
+
+        $diary->delete();
+
+        return redirect()->route('diarys.index')
+            ->with('success', 'Diary deleted successfully.');
     }
 }

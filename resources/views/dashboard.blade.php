@@ -14,4 +14,23 @@
             </div>
         </div>
     </div>
+
+    <div>
+        <h3 class="font-semibold text-lg text-gray-800">All Diaries</h3>
+        <ul class="list-disc pl-5">
+                <div class="mt-4">
+            <a href="{{ route('diarys.create') }}" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                + Add Diary
+            </a>
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ route('diarys.show', auth()->user()->id) }}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                View Your Diaries
+            </a>
+        </div>
+    </div>
+
+
+
 </x-app-layout>

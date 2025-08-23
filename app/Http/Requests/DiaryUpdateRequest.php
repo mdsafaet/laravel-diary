@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DiaryRequest extends FormRequest
+class DiaryUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,11 @@ class DiaryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            
-            'title'       => 'required|string',
-            'content'     => 'required|string|min:10',
-            'date'  => 'required|date',
-            'category_id' => 'required|exists:categories,id',
-            'tag_id'      => 'required|exists:tags,id'
+            'title'       => 'sometimes|string|max:255',
+            'content'     => 'sometimes|string|min:10',
+            'date'        => 'sometimes|date',
+            'category_id' => 'sometimes|integer|exists:categories,id',
+            'tag_id'      => 'sometimes|integer|exists:tags,id'
         ];
     }
 }

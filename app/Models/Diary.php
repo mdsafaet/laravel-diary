@@ -15,7 +15,7 @@ class Diary extends Model
         'category_id',
         'tag_id',
         'title',
-        'entry_date',
+        'date',
         'content'   
 
     ] ;

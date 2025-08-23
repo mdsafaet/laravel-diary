@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DiaryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\AdminController;
@@ -10,21 +11,26 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function(){
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+      Route::resource('categories',CategoryController::class);
+Route::resource('tags', TagController::class);
 });
 
-  Route::resource('categories',CategoryController::class);
-Route::resource('tags', TagController::class);
+
+Route::resource('diarys', DiaryController::class)->middleware(['auth', 'verified']);
   
 require __DIR__.'/auth.php';

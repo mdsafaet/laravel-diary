@@ -41,6 +41,7 @@
                 class="px-4 py-2 bg-green-600 text-black rounded hover:bg-green-700">
             Save
         </button>
+         <a href="{{ route('categories.index') }}" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">Back</a>
     </form>
 </div>
 
